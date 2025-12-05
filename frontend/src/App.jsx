@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import "./App.css";
+import Home from "./pages/Home";
 
 function App() {
   useEffect(() => {
@@ -7,7 +8,7 @@ function App() {
     if (!wrapper) return;
 
     let count = 0;
-    const maxSnowCount = 500;
+    const maxSnowCount = 200;
 
     const addSnow = () => {
       const snow = document.createElement("span");
@@ -16,14 +17,15 @@ function App() {
       const size = Math.random() * 3 + 1;
       snow.style.width = `${size}px`;
       snow.style.height = `${size}px`;
-
       snow.style.left = `${Math.random() * window.innerWidth}px`;
 
-      snow.style.animationDuration = `${Math.random() * (20 - 5) + 5}s`;
+      snow.style.animationDuration = `${Math.random() * (35 - 15) + 15}s`;
       snow.style.animationDelay = `${Math.random() * 10}s`;
 
-      // 여기만 수정됨 → 0.1 ~ 0.4로 더 연하게
       snow.style.opacity = `${Math.random() * 0.3 + 0.1}`;
+
+      // 애니메이션 끝나면 삭제
+      snow.addEventListener("animationend", () => snow.remove());
 
       wrapper.appendChild(snow);
 
@@ -37,13 +39,15 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <>
+      {/* 눈 배경은 항상 최상단 */}
       <div className="snow-wrapper"></div>
 
+      {/* 콘텐츠 전체를 감싸줌 */}
       <div className="content">
-        <h1>🎄  </h1>
+        <Home />
       </div>
-    </div>
+    </>
   );
 }
 

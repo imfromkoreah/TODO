@@ -1,45 +1,6 @@
-/* --- 기본 초기화 혹은 기존 스타일이 있다면 그대로 두고 아래만 추가하면 됨 --- */
-
-/* 눈 스프라이트 스타일 */
-.snow {
-  position: absolute;
-  top: -10px;
-  width: 3px;       /* 매우 작게 */
-  height: 3px;      /* 매우 작게 */
-  background: white;
-  border-radius: 50%;
-  opacity: 0.2;     /* 흐리게 → 더 작아보임 */
-  transform: scale(0.6); /* 크기 축소 → 실제 0.6px 정도 느낌 */
-  pointer-events: none;
-  animation-name: fall;
-  animation-timing-function: linear;
-  animation-iteration-count: infinite;
-}
-
-
-/* 눈 떨어지는 애니메이션 */
-@keyframes fall {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(110vh);
-  }
-}
-
 html, body, #root {
-  height: 100%;   /* 최상위에서 100%가 잡혀야 wrapper가 100vh를 가짐 */
+  width: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
-}
-
-.wrapper {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh; /* 절대 전체 화면 */
-  background: black;
-  overflow: hidden;
-  z-index: -1;
 }
