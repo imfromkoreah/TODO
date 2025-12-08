@@ -1,0 +1,45 @@
+/* Search.css — Card / Calendar와 통일된 글래스 테마 */
+
+.search-wrapper {
+  width: 355px;
+  background: rgba(2, 41, 47, 0.5);
+  backdrop-filter: blur(6px);
+  border-radius: 0.35rem;
+  padding: 12px 14px;
+
+  box-shadow: 0 0 1px #266349, 0 0 1px #083f27;
+
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+
+.search-input {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(255,255,255,0.10);
+  color: white;
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: rgba(255,255,255,0.55);
+}
+
+.search-btn {
+  padding: 8px 12px;
+  background: #e46f01;
+  border: none;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.search-btn:hover {
+  background: #ff8c22;
+}

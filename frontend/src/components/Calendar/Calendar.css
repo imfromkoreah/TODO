@@ -1,0 +1,136 @@
+/* Calendar.css — 기존 레이아웃 유지 + Card와 완전 통일된 청록 글래스 테마 */
+
+/* 전체 박스 */
+.calendar-wrapper {
+  width: 350px;     /* ← Search와 완전히 동일하게 통일 */
+  margin: 0 auto;
+
+  background: rgba(2, 41, 47, 0.5);
+  backdrop-filter: blur(6px);
+  border-radius: 0.35rem;
+  padding: 16px;
+
+  box-shadow: 0 0 1px #266349, 0 0 1px #083f27;
+  color: rgba(255,255,255,0.9);
+
+  aspect-ratio: 1 / 1;
+}
+
+
+/* 🔥 오늘 날짜 강조 */
+.calendar-date-cell.today span {
+  background: rgba(228, 111, 1, 0.85) !important; /* 진한 오렌지 하이라이트 */
+  color: white !important;
+  transform: scale(1.1);
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(228, 111, 1, 0.6);
+}
+
+
+/* 헤더 */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.calendar-date-display {
+  font-size: 20px;
+  font-weight: 600;
+  color: #e46f01; /* 카드 오렌지 포인트 */
+}
+
+/* 이전/다음 달 버튼 */
+.calendar-nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.calendar-nav-buttons button {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.25);
+  color: rgba(255,255,255,0.85);
+
+  font-size: 18px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.calendar-nav-buttons button:hover {
+  background: rgba(255,255,255,0.25);
+  transform: translateY(-2px);
+}
+
+/* 요일 */
+.calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+
+  margin-bottom: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.6);
+}
+
+/* 날짜 그리드 */
+.calendar-dates-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calendar-week-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+/* 날짜 셀 */
+.calendar-date-cell {
+  height: 44px;  /* 기존 크기 유지 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* dimmed 날짜 */
+.calendar-date-cell.dimmed {
+  color: rgba(255,255,255,0.25);
+}
+
+/* 정상 날짜 */
+.calendar-date-cell:not(.dimmed) {
+  color: rgba(255,255,255,0.9);
+}
+
+/* 날짜 원형 스타일 */
+.calendar-date-cell span {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+
+  background: rgba(255,255,255,0.12);
+  color: white;
+  font-weight: 500;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+/* 현재 달 날짜 호버 효과 */
+.calendar-date-cell:not(.dimmed) span:hover {
+  background: rgba(228, 111, 1, 0.4); /* 카드 포인트 오렌지 */
+  transform: scale(1.12);
+}
+
+/* dimmed 날짜 원형 */
+.calendar-date-cell.dimmed span {
+  background: transparent;
+  color: rgba(255,255,255,0.25);
+}
