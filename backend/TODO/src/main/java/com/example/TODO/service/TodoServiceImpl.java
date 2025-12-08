@@ -36,4 +36,14 @@ public class TodoServiceImpl implements TodoService {
         param.put("id", id);
         return todoMapper.deleteTodo(param);
     }
+
+    @Override
+    public List<HashMap<String, Object>> getTodoListByDate(String userId, String date) {
+        HashMap<String, Object> params = new HashMap<>();
+        params.put("user_id", userId);
+        params.put("date", date);
+
+        return todoMapper.selectTodoListByDate(params);
+    }
+
 }

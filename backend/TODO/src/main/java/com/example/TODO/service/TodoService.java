@@ -13,4 +13,6 @@ public interface TodoService {
 
     int deleteTodo(Long id);
 
+    List<HashMap<String, Object>> getTodoListByDate(String userId, String date);
+
 }

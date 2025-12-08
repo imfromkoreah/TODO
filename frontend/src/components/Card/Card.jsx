@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Card.css";
 
-function Card() {
+function Card({ selectedDate }) {
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -10,7 +10,6 @@ function Card() {
     weekday: "long",
   });
 
-  /* 🔥 익명 userId 생성 */
   const [userId, setUserId] = useState("");
 
   useEffect(() => {
@@ -22,29 +21,44 @@ function Card() {
     setUserId(uid);
   }, []);
 
-  /* 🔥 서버에서 불러온 todo 저장 */
   const [todos, setTodos] = useState([]);
 
-  /* 🔥 서버 목록 불러오기 */
-  useEffect(() => {
+  const fetchTodos = () => {
     if (!userId) return;
+
+    if (selectedDate) {
+      axios
+        .get(`/api/todo/${userId}/date/${selectedDate}`)
+        .then((res) => {
+          setTodos(res.data);
+          setCurrentPage(1);
+        })
+        .catch((err) => console.error("날짜별 조회 오류:", err));
+      return;
+    }
 
     axios
       .get(`/api/todo/${userId}`)
-      .then((res) => setTodos(res.data))
-      .catch((err) => console.error("🔥 리스트 조회 오류:", err));
-  }, [userId]);
+      .then((res) => {
+        setTodos(res.data);
+        setCurrentPage(1);
+      })
+      .catch((err) => console.error("전체 조회 오류:", err));
+  };
+
+  useEffect(() => {
+    fetchTodos();
+  }, [userId, selectedDate]);
 
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  /* 페이지네이션 */
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
-  const totalPages = Math.ceil(todos.length / itemsPerPage);
+  const totalPages = Math.max(1, Math.ceil(todos.length / itemsPerPage));
 
   const paginatedTodos = todos.slice(
     (currentPage - 1) * itemsPerPage,
@@ -58,86 +72,82 @@ function Card() {
     setEditingId(null);
   };
 
-  /* 🔥 체크 → 서버 update */
   const toggleCheck = (id) => {
-    const target = todos.find((t) => t.id === id);
+    const target = todos.find(t => t.id === id);
     if (!target) return;
 
-    const updated = {
-      id: id,
+    const newChecked = target.checked ? 0 : 1;
+
+    axios.post("/api/todo/update", {
+      id,
       text: target.text,
-      checked: target.checked ? 0 : 1,
-    };
-
-    axios.post("/api/todo/update", updated).then(() => {
-      setTodos(
-        todos.map((todo) =>
-          todo.id === id ? { ...todo, checked: updated.checked } : todo
-        )
-      );
-    });
-
-    setOpenMenuId(null);
-    setEditingId(null);
+      checked: newChecked,
+      user_id: userId
+    })
+    .then(() => {
+      setTodos(todos.map(todo =>
+        todo.id === id ? { ...todo, checked: newChecked } : todo
+      ));
+    })
+    .catch(err => console.error("체크 업데이트 오류:", err));
   };
 
-  /* 메뉴 */
+
   const toggleMenu = (e, id) => {
     e.stopPropagation();
     setOpenMenuId(openMenuId === id ? null : id);
   };
 
-  /* 수정 시작 */
   const startEdit = (todo) => {
     setEditingId(todo.id);
     setEditText(todo.text);
     setOpenMenuId(null);
   };
 
-  /* 🔥 수정 완료 → 서버 update */
   const finishEdit = () => {
-  const original = todos.find(t => t.id === editingId);
+    const original = todos.find((t) => t.id === editingId);
 
-  const updated = {
-    id: editingId,
-    text: editText,
-    checked: original.checked ? 1 : 0,  // 반드시 포함!
-    user_id: userId,
+    const updated = {
+      id: editingId,
+      text: editText,
+      checked: original.checked ? 1 : 0,
+      user_id: userId,
+    };
+
+    axios.post("/api/todo/update", updated).then(() => {
+      setTodos(
+        todos.map((todo) =>
+          todo.id === editingId ? { ...todo, text: editText } : todo
+        )
+      );
+      setEditingId(null);
+    });
   };
 
-  axios.post("/api/todo/update", updated).then(() => {
-    setTodos(
-      todos.map(todo =>
-        todo.id === editingId ? { ...todo, text: editText } : todo
-      )
-    );
-    setEditingId(null);
-  });
-};
-
-
-  /* 삭제 버튼 누름 */
   const askDelete = (id) => {
     setConfirmDeleteId(id);
     setOpenMenuId(null);
   };
 
-  /* 🔥 삭제(soft delete) */
   const confirmDelete = () => {
     if (confirmDeleteId !== null) {
       axios.post(`/api/todo/delete/${confirmDeleteId}`).then(() => {
         setTodos(todos.filter((todo) => todo.id !== confirmDeleteId));
 
-        const newTotalPages = Math.ceil((todos.length - 1) / itemsPerPage);
+        const newTotalPages = Math.max(
+          1,
+          Math.ceil((todos.length - 1) / itemsPerPage)
+        );
+
         if (currentPage > newTotalPages) {
           setCurrentPage(newTotalPages);
         }
+
         setConfirmDeleteId(null);
       });
     }
   };
 
-  /* 🔥 입력 + 서버 저장 */
   const [inputValue, setInputValue] = useState("");
 
   const addTodo = () => {
@@ -162,7 +172,17 @@ function Card() {
     <div className="card">
       <h1>TO DO LIST</h1>
 
-      <div className="date-text">{today}</div>
+     <div className="date-text">
+      {selectedDate 
+        ? new Date(selectedDate).toLocaleDateString("ko-KR", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            weekday: "long",
+          }) 
+        : today}
+    </div>
+
 
       <div className="todo-input-wrap">
         <input
@@ -173,21 +193,12 @@ function Card() {
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && addTodo()}
         />
-        <button className="add-btn" onClick={addTodo}>추가</button>
+        <button className="add-btn" onClick={addTodo}>
+          추가
+        </button>
       </div>
 
-      {/* 완료 상태 표시 */}
-      <div
-        className="todo-status"
-        style={{
-          textAlign: "right",
-          marginBottom: "0.5rem",
-          color:
-            completedCount === totalCount && totalCount > 0
-              ? "#e46f01"
-              : "rgba(255,255,255,0.75)",
-        }}
-      >
+      <div className="todo-status">
         {completedCount} / {totalCount} 완료됨
       </div>
 
@@ -266,14 +277,7 @@ function Card() {
                   className="circle-btn delete-btn"
                   onClick={() => askDelete(todo.id)}
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#d33"
-                    strokeWidth="2.5"
-                  >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d33" strokeWidth="2.5">
                     <polyline points="3 6 5 6 21 6" />
                     <path d="M19 6l-1 14H6L5 6" />
                     <path d="M10 11v6" />
@@ -287,10 +291,15 @@ function Card() {
         ))}
       </ul>
 
+      {totalCount === 0 && (
+        <div className="empty-message">
+          저장된 기록이 없네요 🤔
+        </div>
+      )}
+
       {totalPages > 1 && (
         <div className="pagination">
           <button onClick={() => changePage(currentPage - 1)}>◀</button>
-
           {[...Array(totalPages)].map((_, idx) => (
             <button
               key={idx}
@@ -300,7 +309,6 @@ function Card() {
               {idx + 1}
             </button>
           ))}
-
           <button onClick={() => changePage(currentPage + 1)}>▶</button>
         </div>
       )}
@@ -310,10 +318,7 @@ function Card() {
           <div className="delete-modal">
             <p>삭제하시겠습니까?</p>
             <div className="delete-modal-btns">
-              <button
-                className="cancel-btn"
-                onClick={() => setConfirmDeleteId(null)}
-              >
+              <button className="cancel-btn" onClick={() => setConfirmDeleteId(null)}>
                 취소
               </button>
               <button className="confirm-btn" onClick={confirmDelete}>

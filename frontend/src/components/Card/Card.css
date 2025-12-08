@@ -427,5 +427,11 @@
   transition: color 0.25s ease; /* 부드럽게 색 변화 */
 }
 
+.empty-message {
+  text-align: center;
+  margin-top: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.95rem;
+}
 
 

@@ -19,6 +19,23 @@
         ORDER BY id DESC
     </select>
 
+    <!-- 날짜별 리스트 조회 -->
+    <select id="selectTodoListByDate" parameterType="java.util.HashMap" resultType="java.util.HashMap">
+        SELECT id,
+               user_id,
+               text,
+               checked,
+               created_date,
+               last_modified_date
+        FROM tb_todo
+        WHERE user_id = #{user_id}
+          AND deleted_flag = 0
+          AND DATE_FORMAT(created_date, '%Y-%m-%d') = #{date}
+        ORDER BY id DESC
+    </select>
+
+
+
     <!-- 추가 -->
     <insert id="insertTodo" parameterType="java.util.HashMap">
         INSERT INTO tb_todo

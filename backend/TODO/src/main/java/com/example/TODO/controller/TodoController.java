@@ -34,4 +34,12 @@ public class TodoController {
     public int delete(@PathVariable Long id) {
         return todoService.deleteTodo(id);
     }
+
+    @GetMapping("/{userId}/date/{date}")
+    public List<HashMap<String, Object>> getListByDate(
+            @PathVariable String userId,
+            @PathVariable String date
+    ) {
+        return todoService.getTodoListByDate(userId, date);
+    }
 }

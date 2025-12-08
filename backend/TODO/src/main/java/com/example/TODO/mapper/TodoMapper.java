@@ -15,4 +15,7 @@ public interface TodoMapper {
 
   int deleteTodo(HashMap<String, Object> param);
 
+  List<HashMap<String, Object>> selectTodoListByDate(HashMap<String, Object> params);
+
+
 }
