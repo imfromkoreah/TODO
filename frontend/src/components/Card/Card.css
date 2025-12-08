@@ -14,6 +14,7 @@
   z-index: 10;
   overflow: hidden;
   box-shadow: 0 0 1px #266349, 0 0 1px #083f27;
+   height: 500px; /* 🔥 카드 전체 고정 높이 */
 }
 
 /* TO DO List Title */
@@ -21,7 +22,7 @@
   font-size: 3rem;
   font-family: 'Oooh Baby', cursive;
   margin-bottom: 1.5rem;
-  text-align: center;    /* 가운데 정렬 추가 */
+  text-align: center;
 
   text-shadow: 
     1px 0px 0px #e46f01,
@@ -30,6 +31,14 @@
     0px -1px 0px #e46f01;
 }
 
+/* 날짜 텍스트 */
+.date-text {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 1rem;
+  margin-left: 2px;
+  text-align: left;
+}
 
 /* Input Area */
 .todo-input-wrap {
@@ -103,12 +112,50 @@
   color: white;
   font-size: 1rem;
   backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
   transition: background 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
 .todo-item:hover {
   background: rgba(255, 255, 255, 0.18);
-  transform: translateX(4px);
+  transform: translateX(1px);
+}
+
+/* 체크된 항목 */
+.checked-item {
+  opacity: 0.7;
+  text-decoration: line-through;
+}
+
+/* 체크박스 */
+.todo-check {
+  width: 18px;
+  height: 18px;
+  accent-color: #e46f01;
+}
+
+/* 햄버거 메뉴 버튼 */
+.menu-btn {
+  width: 22px;
+  height: 22px;
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 3px;
+  margin-left: auto;
+}
+
+.menu-btn span {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 2px;
 }
 
 /* Top Decoration Bar */
@@ -144,3 +191,240 @@
   content: '';
   z-index: -1;
 }
+
+/* 원형 팝업 메뉴 전체 묶음 */
+.circular-menu {
+  position: absolute;
+  right: 40px; /* 햄버거 버튼 왼쪽 기준 */
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+}
+
+/* 개별 동그라미 버튼 기본 */
+/* 팝업 메뉴 래퍼 */
+.circular-menu {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  z-index: 3000;
+}
+
+/* 버튼 기본 스타일 */
+.circle-btn {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 0;
+  transform: translate(0, 0) scale(0.6);
+  transition:
+    transform 0.25s cubic-bezier(0.3, 0.8, 0.3, 1),
+    opacity 0.25s ease;
+}
+
+/* 열렸을 때 위치 — 수정, 삭제 버튼 나란히 */
+.circular-menu.open .edit-btn {
+  transform: translate(-40px, -48px) scale(1); /* 위로 살짝 + 오른쪽 */
+  opacity: 1;
+}
+
+.circular-menu.open .delete-btn {
+  transform: translate(-75px, -48px) scale(1); /* 수정 왼쪽에 배치 */
+  opacity: 1;
+}
+
+/* Hover */
+.circle-btn:hover {
+  background: #f0f0f0;
+}
+
+.edit-input {
+  flex: 1;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: white;
+  font-size: 1rem;
+  backdrop-filter: blur(2px);
+}
+
+.edit-input:focus {
+  outline: none;
+  border: 1px solid #e46f01;
+  background: rgba(255,255,255,0.25);
+}
+.done-btn {
+  width: 25px;
+  height: 25px;
+  min-width: 30px;
+  min-height: 30px;
+  background: white;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  flex-shrink: 0;
+  transition: 
+    background 0.2s ease,
+    transform 0.23s cubic-bezier(0.3, 0.8, 0.3, 1),
+    box-shadow 0.2s ease;
+}
+
+.done-btn svg {
+  stroke: #4CAF50;
+  transition: 0.2s ease;
+}
+
+/* ✔ 완료 hover 효과 — 수정/삭제 버튼과 통일 */
+.done-btn:hover {
+  background: #f0f0f0;
+  transform: scale(1.08);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+}
+
+.done-btn:hover svg {
+  stroke: #66bb6a;
+  transform: scale(1.11);
+}
+/* 삭제 모달 배경 */
+.delete-modal-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5000;
+  backdrop-filter: blur(2px);
+}
+
+/* 모달 박스 */
+.delete-modal {
+  background: rgba(255,255,255,0.15);
+  padding: 18px 22px;
+  border-radius: 10px;
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  text-align: center;
+  min-width: 220px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* 버튼 배치 */
+.delete-modal-btns {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* 취소/삭제 버튼 */
+.cancel-btn,
+.confirm-btn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.cancel-btn {
+  background: rgba(255,255,255,0.2);
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.confirm-btn {
+  background: #d33;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background: #b30000;
+}
+
+/* 페이지네이션 - 카드 하단 고정 */
+.pagination {
+  position: absolute;
+  bottom: 10px;          /* 카드 아래에서 18px 띄움 */
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.pagination button {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: color 0.2s ease, transform 0.15s ease;
+}
+
+.pagination button:hover {
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.pagination .active {
+  color: #e46f01;
+  font-weight: 700;
+  position: relative;
+}
+
+.pagination .active::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 60%;
+  height: 2px;
+  background: #e46f01;
+  border-radius: 2px;
+}
+.todo-status {
+  margin-top: -0.6rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.75);
+  text-align: right;
+  padding-left: 2px;
+  transition: color 0.25s ease; /* 부드럽게 색 변화 */
+}
+
+
+
