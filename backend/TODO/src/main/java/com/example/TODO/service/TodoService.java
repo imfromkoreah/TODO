@@ -15,4 +15,11 @@ public interface TodoService {
 
     List<HashMap<String, Object>> getTodoListByDate(String userId, String date);
 
+    // 할 일 완료시 도장 추가
+    int insertDoneDate(String userId, String doneDate);
+
+    int deleteDoneDate(String userId, String doneDate);
+
+    List<String> getDoneDates(String userId);
+
 }

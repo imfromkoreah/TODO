@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Card.css";
 
-function Card({ selectedDate }) {
+function Card({ selectedDate, onTodoStatusChange }) {
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -47,9 +47,87 @@ function Card({ selectedDate }) {
   };
 
   useEffect(() => {
-    console.log("넘어온 선택날짜 :", selectedDate)
     fetchTodos();
   }, [userId, selectedDate]);
+
+
+  /* -------------------------------------------------------------
+      🔥 체크/해제 시 → DB에도 도장 저장/삭제 + 달력 즉시 반영
+  -------------------------------------------------------------- */
+  const toggleCheck = (id) => {
+    const target = todos.find((t) => t.id === id);
+    if (!target) return;
+
+    const newChecked = target.checked ? 0 : 1;
+
+    axios
+      .post("/api/todo/update", {
+        id,
+        text: target.text,
+        checked: newChecked,
+        user_id: userId,
+      })
+      .then(() => {
+        const updatedTodos = todos.map((todo) =>
+          todo.id === id ? { ...todo, checked: newChecked } : todo
+        );
+        setTodos(updatedTodos);
+
+        const completed = updatedTodos.filter((t) => t.checked).length;
+        const total = updatedTodos.length;
+
+        /* 🔥 1) 체크 → 전체 완료된 경우 = 도장 저장 */
+        if (completed === total && total > 0) {
+          saveStamp(selectedDate);
+        }
+
+        /* 🔥 2) 개별 체크 완료 → 도장 추가 */
+        if (newChecked === 1) {
+          saveStamp(selectedDate);
+        }
+
+        /* 🔥 3) 체크 해제 → 도장 삭제 */
+        if (newChecked === 0) {
+          deleteStamp(selectedDate);
+        }
+      })
+      .catch((err) => console.error("체크 업데이트 오류:", err));
+  };
+
+
+  /* -------------------------------------------------------------
+        🔥 도장 저장 / 삭제 API (DB 반영)
+  -------------------------------------------------------------- */
+  const saveStamp = (date) => {
+    axios
+      .post("/api/todo/done/add", {
+        user_id: userId,
+        done_date: date,
+      })
+      .then(() => {
+        if (typeof onTodoStatusChange === "function") {
+          onTodoStatusChange(date); // 달력에 도장 표시
+        }
+      })
+      .catch((err) => console.error("도장 저장 오류:", err));
+  };
+
+  const deleteStamp = (date) => {
+    axios
+      .post("/api/todo/done/delete", {
+        user_id: userId,
+        done_date: date,
+      })
+      .then(() => {
+        if (typeof onTodoStatusChange === "function") {
+          onTodoStatusChange(date, true); // 달력에서 도장 제거
+        }
+      })
+      .catch((err) => console.error("도장 삭제 오류:", err));
+  };
+
+
+  /* ------------------------------------------------------------- */
 
   const [openMenuId, setOpenMenuId] = useState(null);
   const [editingId, setEditingId] = useState(null);
@@ -72,27 +150,6 @@ function Card({ selectedDate }) {
     setOpenMenuId(null);
     setEditingId(null);
   };
-
-  const toggleCheck = (id) => {
-    const target = todos.find(t => t.id === id);
-    if (!target) return;
-
-    const newChecked = target.checked ? 0 : 1;
-
-    axios.post("/api/todo/update", {
-      id,
-      text: target.text,
-      checked: newChecked,
-      user_id: userId
-    })
-    .then(() => {
-      setTodos(todos.map(todo =>
-        todo.id === id ? { ...todo, checked: newChecked } : todo
-      ));
-    })
-    .catch(err => console.error("체크 업데이트 오류:", err));
-  };
-
 
   const toggleMenu = (e, id) => {
     e.stopPropagation();
@@ -173,17 +230,16 @@ function Card({ selectedDate }) {
     <div className="card">
       <h1>TO DO LIST</h1>
 
-     <div className="date-text">
-      {selectedDate 
-        ? new Date(selectedDate).toLocaleDateString("ko-KR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            weekday: "long",
-          }) 
-        : today}
-    </div>
-
+      <div className="date-text">
+        {selectedDate
+          ? new Date(selectedDate).toLocaleDateString("ko-KR", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              weekday: "long",
+            })
+          : today}
+      </div>
 
       <div className="todo-input-wrap">
         <input
@@ -240,16 +296,7 @@ function Card({ selectedDate }) {
                   finishEdit();
                 }}
               >
-                <svg width="20" height="20" viewBox="0 0 24 24">
-                  <polyline
-                    points="20 6 9 17 4 12"
-                    fill="none"
-                    stroke="#4CAF50"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                ✔
               </button>
             ) : (
               <button className="menu-btn" onClick={(e) => toggleMenu(e, todo.id)}>
@@ -268,23 +315,14 @@ function Card({ selectedDate }) {
                   className="circle-btn edit-btn"
                   onClick={() => startEdit(todo)}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" stroke="#333" strokeWidth="2">
-                    <path d="M12 20h9" />
-                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
-                  </svg>
+                  ✏️
                 </button>
 
                 <button
                   className="circle-btn delete-btn"
                   onClick={() => askDelete(todo.id)}
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#d33" strokeWidth="2.5">
-                    <polyline points="3 6 5 6 21 6" />
-                    <path d="M19 6l-1 14H6L5 6" />
-                    <path d="M10 11v6" />
-                    <path d="M14 11v6" />
-                    <path d="M9 6V4h6v2" />
-                  </svg>
+                  🗑
                 </button>
               </div>
             )}
@@ -293,9 +331,7 @@ function Card({ selectedDate }) {
       </ul>
 
       {totalCount === 0 && (
-        <div className="empty-message">
-          저장된 기록이 없네요 🤔
-        </div>
+        <div className="empty-message">저장된 기록이 없네요 🤔</div>
       )}
 
       {totalPages > 1 && (

@@ -42,4 +42,25 @@ public class TodoController {
     ) {
         return todoService.getTodoListByDate(userId, date);
     }
+
+    @PostMapping("/done/add")
+    public int addDoneDate(@RequestBody HashMap<String, Object> body) {
+        String userId = (String) body.get("user_id");
+        String doneDate = (String) body.get("done_date");
+        if (userId == null || doneDate == null) return 0;
+        return todoService.insertDoneDate(userId, doneDate);
+    }
+
+    @PostMapping("/done/delete")
+    public int deleteDoneDate(@RequestBody HashMap<String, Object> body) {
+        String userId = (String) body.get("user_id");
+        String doneDate = (String) body.get("done_date");
+        if (userId == null || doneDate == null) return 0;
+        return todoService.deleteDoneDate(userId, doneDate);
+    }
+
+    @GetMapping("/done/{userId}")
+    public List<String> getDoneDates(@PathVariable String userId) {
+        return todoService.getDoneDates(userId);
+    }
 }

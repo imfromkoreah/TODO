@@ -34,6 +34,28 @@
         ORDER BY id DESC
     </select>
 
+    <!-- 할 일 완료시 눈송이 도장 삽입/삭제/조회 -->
+    <insert id="insertDoneDate" parameterType="java.util.HashMap">
+        INSERT INTO tb_todo_done_day (user_id, done_date)
+        VALUES (#{user_id}, #{done_date})
+            ON DUPLICATE KEY UPDATE done_date = #{done_date};
+    </insert>
+
+    <delete id="deleteDoneDate" parameterType="java.util.HashMap">
+        DELETE FROM tb_todo_done_day
+        WHERE user_id = #{user_id}
+          AND done_date = #{done_date};
+    </delete>
+
+    <select id="selectDoneDates" parameterType="java.util.HashMap" resultType="java.lang.String">
+        SELECT done_date
+        FROM tb_todo_done_day
+        WHERE user_id = #{user_id};
+    </select>
+
+
+
+
 
 
     <!-- 추가 -->

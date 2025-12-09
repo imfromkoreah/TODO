@@ -19,11 +19,11 @@
 
 /* 🔥 오늘 날짜 강조 */
 .calendar-date-cell.today span {
-  background: rgba(230, 8, 8, 0.85) !important; 
+  background: rgba(160, 10, 10, 0.85) !important; 
   color: white !important;
   transform: scale(1.1);
   font-weight: 700;
-  box-shadow: 0 0 6px rgba(228, 111, 1, 0.6);
+  box-shadow: 0 0 6px rgba(230, 8, 8, 0.85);
 }
 
 
@@ -125,7 +125,7 @@
 
 /* 현재 달 날짜 호버 효과 */
 .calendar-date-cell:not(.dimmed) span:hover {
-  background: rgba(228, 111, 1, 0.4); /* 카드 포인트 오렌지 */
+  background: rgba(160, 10, 10, 0.85);
   transform: scale(1.12);
 }
 
@@ -134,3 +134,29 @@
   background: transparent;
   color: rgba(255,255,255,0.25);
 }
+
+/* 🔥 선택한 날짜 강조 (today와 동일 스타일, 색만 다름) */
+.calendar-date-cell.selected-date span {
+  background: rgba(255, 18, 18, 0.212) !important;
+  color: white !important;
+  transform: scale(1.1);
+  font-weight: 700;
+  box-shadow: 0 0 6px rgba(192, 1, 1, 0.85);
+  border-radius: 50%;
+}
+
+.calendar-date-cell {
+  position: relative;
+}
+
+.done-stamp {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./Calendar.css";
+import snowStamp from "../../assets/snow.png";   // 🔥 import한 이미지 사용!
 
-const Calendar = ({ renderDateCell, onDateClick }) => {
+const Calendar = ({ renderDateCell, onDateClick, selectedDate, doneDates = [] }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
@@ -46,11 +47,32 @@ const Calendar = ({ renderDateCell, onDateClick }) => {
   const isSameMonth = (date) => date.getMonth() === currentDate.getMonth();
 
   const today = new Date();
-
   const isToday = (date) =>
     date.getFullYear() === today.getFullYear() &&
     date.getMonth() === today.getMonth() &&
     date.getDate() === today.getDate();
+
+  // 🔥 선택 날짜 체크
+  const isSelectedDate = (date) => {
+    if (!selectedDate) return false;
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const formatted = `${y}-${m}-${d}`;
+
+    return formatted === selectedDate;
+  };
+
+  // 🔥 완료된 날짜 체크
+  const isDoneDate = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const formatted = `${y}-${m}-${d}`;
+
+    return doneDates.includes(formatted);
+  };
 
   return (
     <div className="calendar-wrapper">
@@ -77,29 +99,40 @@ const Calendar = ({ renderDateCell, onDateClick }) => {
             {week.map((date, j) => {
               const currentMonth = isSameMonth(date);
               const todayClass = isToday(date) ? "today" : "";
+              const selectedClass =
+                isSelectedDate(date) && !isToday(date) ? "selected-date" : "";
+
+              const done = isDoneDate(date);
 
               return (
                 <div
                   key={j}
-                  className={`calendar-date-cell ${
-                    !currentMonth ? "dimmed" : ""
-                  } ${todayClass}`}
+                  className={`calendar-date-cell 
+                    ${!currentMonth ? "dimmed" : ""} 
+                    ${todayClass}
+                    ${selectedClass}`}
                   onClick={() => {
                     if (!onDateClick) return;
 
-                    // 한국시간 기준 날짜 문자열 생성
                     const y = date.getFullYear();
                     const m = String(date.getMonth() + 1).padStart(2, "0");
                     const d = String(date.getDate()).padStart(2, "0");
+                    const formatted = `${y}-${m}-${d}`;
 
-                    const formatted = `${y}-${m}-${d}`;;
-
-                    onDateClick(formatted);   // ← 이제부터 문자열 넘김
+                    onDateClick(formatted);
                   }}
                 >
-                  {renderDateCell
-                    ? renderDateCell(date, currentMonth)
-                    : <span>{date.getDate()}</span>}
+                  {/* 날짜 숫자 */}
+                  <span>{date.getDate()}</span>
+
+                  {/* 🔥 완료 날짜면 도장 표시 */}
+                  {done && (
+                    <img
+                      src={snowStamp}
+                      alt="done"
+                      className="done-stamp"
+                    />
+                  )}
                 </div>
               );
             })}

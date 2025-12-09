@@ -17,5 +17,11 @@ public interface TodoMapper {
 
   List<HashMap<String, Object>> selectTodoListByDate(HashMap<String, Object> params);
 
+  int insertDoneDate(HashMap<String, Object> param);
+
+  int deleteDoneDate(HashMap<String, Object> param);
+
+  List<String> selectDoneDates(HashMap<String, Object> param);
+
 
 }

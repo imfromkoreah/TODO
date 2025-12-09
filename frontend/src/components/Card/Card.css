@@ -6,7 +6,7 @@
   flex-direction: column;
   width: 350px;          /* ← 고정 너비 (또는 max-content) */
   min-height: 480px;
-  color: #e46f01;
+  color:  rgba(122, 20, 20, 0.85);
   border-radius: 0.25rem;
   padding: 2rem;
   position: relative;
@@ -26,10 +26,10 @@
   text-align: center;
 
   text-shadow: 
-    1px 0px 0px #e46f01,
-    -1px 0px 0px #e46f01,
-    0px 1px 0px #e46f01,
-    0px -1px 0px #e46f01;
+    1px 0px 0px rgba(230, 8, 8, 0.85),
+    -1px 0px 0px rgba(230, 8, 8, 0.85),
+    0px 1px 0px rgba(230, 8, 8, 0.85),
+    0px -1px 0px rgba(230, 8, 8, 0.85);
 }
 
 /* 날짜 텍스트 */
@@ -66,7 +66,7 @@
 }
 
 .todo-input:focus {
-  border: 1px solid #e46f01;
+  border: 1px solid rgba(230, 8, 8, 0.85);
   background: rgba(255, 255, 255, 0.2);
 }
 
@@ -135,7 +135,7 @@
 .todo-check {
   width: 18px;
   height: 18px;
-  accent-color: #e46f01;
+  accent-color: rgba(122, 20, 20, 0.85);
 }
 
 /* 햄버거 메뉴 버튼 */
@@ -266,7 +266,7 @@
 
 .edit-input:focus {
   outline: none;
-  border: 1px solid #e46f01;
+  border: 1px solid rgba(230, 8, 8, 0.85);
   background: rgba(255,255,255,0.25);
 }
 .done-btn {
@@ -400,7 +400,7 @@
 }
 
 .pagination .active {
-  color: #e46f01;
+  color: rgba(230, 8, 8, 0.85);
   font-weight: 700;
   position: relative;
 }
@@ -414,7 +414,7 @@
   margin: auto;
   width: 60%;
   height: 2px;
-  background: #e46f01;
+  background: rgba(230, 8, 8, 0.85);
   border-radius: 2px;
 }
 .todo-status {

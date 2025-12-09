@@ -46,4 +46,28 @@ public class TodoServiceImpl implements TodoService {
         return todoMapper.selectTodoListByDate(params);
     }
 
+    // 할 일 완료시 도장 구현체 추가함
+    @Override
+    public int insertDoneDate(String userId, String doneDate) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("user_id", userId);
+        param.put("done_date", doneDate);
+        return todoMapper.insertDoneDate(param);
+    }
+
+    @Override
+    public int deleteDoneDate(String userId, String doneDate) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("user_id", userId);
+        param.put("done_date", doneDate);
+        return todoMapper.deleteDoneDate(param);
+    }
+
+    @Override
+    public List<String> getDoneDates(String userId) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("user_id", userId);
+        return todoMapper.selectDoneDates(param);
+    }
+
 }
