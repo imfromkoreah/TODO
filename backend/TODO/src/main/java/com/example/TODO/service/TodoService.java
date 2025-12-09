@@ -22,4 +22,7 @@ public interface TodoService {
 
     List<String> getDoneDates(String userId);
 
+    // 했던 일 검색하기
+    List<HashMap<String, Object>> searchTodo(String userId, String keyword);
+
 }

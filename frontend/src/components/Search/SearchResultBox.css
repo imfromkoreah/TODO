@@ -1,53 +1,36 @@
-/* Calendar와 동일한 틀 유지 */
 .search-result-wrapper {
-  width: 350px;                    /* Calendar와 동일한 width */
+  width: 350px;
   margin: 0 auto;
-
   background: rgba(2, 41, 47, 0.5);
   backdrop-filter: blur(6px);
   border-radius: 0.35rem;
   padding: 16px;
-
   box-shadow: 0 0 1px #266349, 0 0 1px #083f27;
   color: rgba(255,255,255,0.9);
 
-  aspect-ratio: 1 / 1;             /* 정사각형 박스 유지 */
+  aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
 }
 
-/* 제목 */
-.search-result-title {
-  font-size: 20px;
-  font-weight: 600;
-  color: #e46f01; /* 카드 포인트 오렌지 */
-  margin-bottom: 12px;
-  text-align: center;
+/* 🔥 등장 애니메이션 */
+.fade-slide {
+  animation: fadeSlide 0.35s ease forwards;
 }
 
-/* 내용 영역 */
-.search-result-content {
-  flex: 1;
-  background: rgba(255,255,255,0.08);
-  border-radius: 8px;
-  padding: 14px;
-  overflow-y: auto;
+@keyframes fadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* 검색어 설명 */
-.keyword-text {
-  font-size: 15px;
-  margin-bottom: 20px;
-}
-
-/* 기본 결과 */
-.no-result {
-  margin-top: 10px;
-  color: rgba(255,255,255,0.6);
-  font-size: 14px;
-}
 .back-btn {
-  align-self: flex-start;          /* 🔥 왼쪽으로 붙이기 */
+  align-self: flex-start;
   margin-bottom: 10px;
 
   width: 32px;
@@ -77,3 +60,61 @@
   height: 18px;
 }
 
+.search-result-content {
+  flex: 1;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 14px;
+  overflow-y: auto;
+}
+
+.keyword-text {
+  font-size: 15px;
+  margin-bottom: 12px;
+}
+
+.no-result {
+  margin-top: 10px;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+}
+
+/* 🔥 검색 리스트 */
+.search-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between; /* 🔥 텍스트 왼쪽 / 날짜 오른쪽 */
+  align-items: center;
+
+  padding: 10px 12px;
+  margin-bottom: 8px;
+
+  background: rgba(255,255,255,0.08);
+  border-radius: 6px;
+
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.search-item:hover {
+  background: rgba(255,255,255,0.18);
+  transform: translateY(-2px);
+}
+
+.search-text {
+  font-size: 15px;
+  color: #fff;
+}
+
+.search-date {
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  margin-left: 12px;
+  min-width: 50px;
+  text-align: right;
+}

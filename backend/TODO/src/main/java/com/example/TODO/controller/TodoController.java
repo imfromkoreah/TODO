@@ -43,6 +43,7 @@ public class TodoController {
         return todoService.getTodoListByDate(userId, date);
     }
 
+    // 리스트 완료시 눈송이 도장
     @PostMapping("/done/add")
     public int addDoneDate(@RequestBody HashMap<String, Object> body) {
         String userId = (String) body.get("user_id");
@@ -63,4 +64,14 @@ public class TodoController {
     public List<String> getDoneDates(@PathVariable String userId) {
         return todoService.getDoneDates(userId);
     }
+
+    // 했던 일 검색하기
+    @GetMapping("/search/{userId}/{keyword}")
+    public List<HashMap<String, Object>> searchTodo(
+            @PathVariable String userId,
+            @PathVariable String keyword
+    ) {
+        return todoService.searchTodo(userId, keyword);
+    }
+
 }

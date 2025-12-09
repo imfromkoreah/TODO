@@ -4,6 +4,12 @@ import "./Search.css";
 function Search({ onSearch }) {
   const [value, setValue] = useState("");
 
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      if (onSearch) onSearch(value);
+    }
+  };
+
   return (
     <div className="search-wrapper">
       <input
@@ -12,6 +18,7 @@ function Search({ onSearch }) {
         className="search-input"
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={handleKeyDown}  
       />
       <button
         className="search-btn"

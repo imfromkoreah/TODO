@@ -70,4 +70,14 @@ public class TodoServiceImpl implements TodoService {
         return todoMapper.selectDoneDates(param);
     }
 
+    // 했던 일 검색하기
+    @Override
+    public List<HashMap<String, Object>> searchTodo(String userId, String keyword) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("user_id", userId);
+        param.put("keyword", keyword);
+        return todoMapper.searchTodo(param);
+    }
+
+
 }

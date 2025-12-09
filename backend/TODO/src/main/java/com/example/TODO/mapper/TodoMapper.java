@@ -23,5 +23,6 @@ public interface TodoMapper {
 
   List<String> selectDoneDates(HashMap<String, Object> param);
 
+  List<HashMap<String, Object>> searchTodo(HashMap<String, Object> param);
 
 }
