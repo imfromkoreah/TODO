@@ -14,10 +14,13 @@ public class TodoController {
 
     private final TodoService todoService;
 
-    // {유저별} 전체 할 일 목록 조회
-    @GetMapping("/{userId}")
-    public List<HashMap<String, Object>> getList(@PathVariable String userId) {
-        return todoService.getTodoList(userId);
+    // {유저별} 특정 날짜에 해당하는 할 일 목록 조회
+    @GetMapping("/{userId}/date/{date}")
+    public List<HashMap<String, Object>> getListByDate(
+            @PathVariable String userId,
+            @PathVariable String date
+    ) {
+        return todoService.getTodoListByDate(userId, date);
     }
 
     @PostMapping("/add")
@@ -34,15 +37,6 @@ public class TodoController {
     @PostMapping("/delete/{id}")
     public int delete(@PathVariable Long id) {
         return todoService.deleteTodo(id);
-    }
-
-    // {유저별} 특정 날짜에 해당하는 할 일 목록 조회
-    @GetMapping("/{userId}/date/{date}")
-    public List<HashMap<String, Object>> getListByDate(
-            @PathVariable String userId,
-            @PathVariable String date
-    ) {
-        return todoService.getTodoListByDate(userId, date);
     }
 
     // 리스트 완료시 눈송이 도장

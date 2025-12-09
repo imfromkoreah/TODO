@@ -3,7 +3,8 @@ import axios from "axios";
 import "./Card.css";
 
 function Card({ userId, selectedDate, handleTodoCompletion }) {
-// 1) 날짜(그냥 예쁘게 표시)
+
+  // 1) 날짜(그냥 예쁘게 표시)
 const today = new Date().toLocaleDateString("ko-KR", {
   year: "numeric",
   month: "long",
@@ -41,12 +42,15 @@ useEffect(() => {
   fetchTodos();
 }, [userId, selectedDate]);
 
-
 // 3) TODO 추가 (CREATE)
 const [inputValue, setInputValue] = useState("");
 
 const addTodo = () => {
   if (inputValue.trim() === "") return;
+
+  // 이미 완료 상태였는지 체크
+  const wasAllCompleted =
+    todos.length > 0 && todos.every((t) => t.checked);
 
   const newTodo = {
     user_id: userId,
@@ -55,8 +59,14 @@ const addTodo = () => {
   };
 
   axios.post("/api/todo/add", newTodo).then((res) => {
+    // 새 할 일(미체크 상태)을 리스트에 추가
     setTodos([res.data, ...todos]);
     setInputValue("");
+
+    // 기존에 전부 완료였고, 날짜가 선택된 상태였다면 → 도장 삭제
+    if (selectedDate && wasAllCompleted) {
+      deleteStamp(selectedDate);
+    }
   });
 };
 

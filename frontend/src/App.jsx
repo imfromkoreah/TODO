@@ -3,6 +3,7 @@ import "./App.css";
 import Home from "./pages/Home";
 
 function App() {
+  // [] -> 마운트될 때 1번만 실행하도록 설정. 이후에 재실행 안됨
   useEffect(() => {
     const wrapper = document.querySelector(".snow-wrapper");
     if (!wrapper) return;
@@ -40,7 +41,7 @@ function App() {
 
   return (
     <>
-      {/* 눈 배경은 항상 최상단 */}
+      {/* 눈 배경은 항상 최상단*/}
       <div className="snow-wrapper"></div>
 
       {/* 콘텐츠 전체를 감싸줌 */}
