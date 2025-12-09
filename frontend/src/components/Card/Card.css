@@ -6,7 +6,7 @@
   flex-direction: column;
   width: 350px;          /* ← 고정 너비 (또는 max-content) */
   min-height: 480px;
-  color:  rgba(122, 20, 20, 0.85);
+  color:  rgba(185, 184, 184, 0.85);
   border-radius: 0.25rem;
   padding: 2rem;
   position: relative;
@@ -26,10 +26,10 @@
   text-align: center;
 
   text-shadow: 
-    1px 0px 0px rgba(230, 8, 8, 0.85),
-    -1px 0px 0px rgba(230, 8, 8, 0.85),
-    0px 1px 0px rgba(230, 8, 8, 0.85),
-    0px -1px 0px rgba(230, 8, 8, 0.85);
+    1px 0px 0px rgba(255, 255, 255, 0.85),
+    -1px 0px 0px rgba(255, 255, 255, 0.85),
+    0px 1px 0px rgba(255, 255, 255, 0.85),
+    0px -1px 0px rgba(255, 255, 255, 0.85);
 }
 
 /* 날짜 텍스트 */

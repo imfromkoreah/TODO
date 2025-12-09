@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import "./Card.css";
 
-function Card({ selectedDate, onTodoStatusChange }) {
+function Card({ userId, selectedDate, handleTodoCompletion }) {
   const today = new Date().toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
@@ -10,19 +10,10 @@ function Card({ selectedDate, onTodoStatusChange }) {
     weekday: "long",
   });
 
-  const [userId, setUserId] = useState("");
-
-  useEffect(() => {
-    let uid = localStorage.getItem("anon_user_id");
-    if (!uid) {
-      uid = "anon_" + Math.random().toString(36).substring(2, 14);
-      localStorage.setItem("anon_user_id", uid);
-    }
-    setUserId(uid);
-  }, []);
-
+  // 상태 정의하기
   const [todos, setTodos] = useState([]);
-
+  
+  // 서버에서 {유저별} 특정 날짜에 해당하는 할 일 목록 조회
   const fetchTodos = () => {
     if (!userId) return;
 
@@ -50,10 +41,7 @@ function Card({ selectedDate, onTodoStatusChange }) {
     fetchTodos();
   }, [userId, selectedDate]);
 
-
-  /* -------------------------------------------------------------
-      🔥 체크/해제 시 → DB에도 도장 저장/삭제 + 달력 즉시 반영
-  -------------------------------------------------------------- */
+  // 할 일 목록 체크해서 서버에 요청 (부모에서 관리 안 함)
   const toggleCheck = (id) => {
     const target = todos.find((t) => t.id === id);
     if (!target) return;
@@ -76,17 +64,12 @@ function Card({ selectedDate, onTodoStatusChange }) {
         const completed = updatedTodos.filter((t) => t.checked).length;
         const total = updatedTodos.length;
 
-        /* 🔥 1) 체크 → 전체 완료된 경우 = 도장 저장 */
+        /* {complatedCount} == {totalCount} 일 때만 완료 도장*/
         if (completed === total && total > 0) {
           saveStamp(selectedDate);
         }
 
-        /* 🔥 2) 개별 체크 완료 → 도장 추가 */
-        if (newChecked === 1) {
-          saveStamp(selectedDate);
-        }
-
-        /* 🔥 3) 체크 해제 → 도장 삭제 */
+        /* 하나라도 체크 해제되면 도장 삭제 */
         if (newChecked === 0) {
           deleteStamp(selectedDate);
         }
@@ -94,10 +77,9 @@ function Card({ selectedDate, onTodoStatusChange }) {
       .catch((err) => console.error("체크 업데이트 오류:", err));
   };
 
-
-  /* -------------------------------------------------------------
-        🔥 도장 저장 / 삭제 API (DB 반영)
-  -------------------------------------------------------------- */
+  // 할 일 완료시 도장 찍기
+  // {complatedCount} == {totalCount} 일 때만 완료 도장
+  // (상태 반영은 부모에서!!!)
   const saveStamp = (date) => {
     axios
       .post("/api/todo/done/add", {
@@ -105,8 +87,8 @@ function Card({ selectedDate, onTodoStatusChange }) {
         done_date: date,
       })
       .then(() => {
-        if (typeof onTodoStatusChange === "function") {
-          onTodoStatusChange(date); // 달력에 도장 표시
+        if (typeof handleTodoCompletion === "function") {
+          handleTodoCompletion(date); // 달력에 도장 표시
         }
       })
       .catch((err) => console.error("도장 저장 오류:", err));
@@ -119,13 +101,12 @@ function Card({ selectedDate, onTodoStatusChange }) {
         done_date: date,
       })
       .then(() => {
-        if (typeof onTodoStatusChange === "function") {
-          onTodoStatusChange(date, true); // 달력에서 도장 제거
+        if (typeof handleTodoCompletion === "function") {
+          handleTodoCompletion(date, true); // 달력에서 도장 제거
         }
       })
       .catch((err) => console.error("도장 삭제 오류:", err));
   };
-
 
   /* ------------------------------------------------------------- */
 

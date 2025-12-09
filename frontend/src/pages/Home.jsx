@@ -9,22 +9,31 @@ import SearchResultBox from "../components/Search/SearchResultBox";
 import "./Home.css";
 
 function Home() {
+
+  // 상태 정의하기
+  const [userId, setUserId] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [doneDates, setDoneDates] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
   const [keyword, setKeyword] = useState("");
-
-  const [selectedDate, setSelectedDate] = useState(null);
-
-  const [doneDates, setDoneDates] = useState([]);
-
-  const [userId, setUserId] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
+  
+  // 날짜를 yyyy-mm-dd 형태로 바꾸기 위해서 사용
+  // Card 요소랑 Calendar 요소 모두 이 포맷을 기반으로 동작하게 구성함
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
+
+  // JS 내장 함수 new Date() 사용
+  useEffect(() => {
+    if (selectedDate === null) {
+      const today = new Date();
+      setSelectedDate(formatDate(today));
+    }
+  }, [selectedDate]);
 
   // 사용자 ID 초기 설정
   useEffect(() => {
@@ -36,32 +45,26 @@ function Home() {
     setUserId(uid);
   }, []);
 
-  // 첫 화면 로드시 오늘 날짜 설정
-  useEffect(() => {
-    if (selectedDate === null) {
-      const today = new Date();
-      setSelectedDate(formatDate(today));
-    }
-  }, [selectedDate]);
-
-  // DB에서 도장 날짜 불러오기
+  // DB에서 tb_todo_done_day 도장 불러오기
+  // userId 바뀔 때마다 실행됨 (유저에 따른 도장 불러오기!)
   useEffect(() => {
     if (!userId) return;
-
+    
     axios
       .get(`/api/todo/done/${userId}`)
       .then((res) => setDoneDates(res.data))
       .catch((err) => console.error("도장 날짜 불러오기 오류:", err));
   }, [userId]);
 
-  // Card에서 도장 업데이트 이벤트 받기
-  const handleTodoStatusChange = (date, isDelete = false) => {
+  // Card에서 할 일 완료/미완료 시 도장 목록을 업데이트
+  // date랑 isDelete를 매개변수로 지정
+  const handleTodoCompletion = (date, isDelete = false) => {
     setDoneDates((prev) => {
       if (isDelete) return prev.filter((d) => d !== date);
 
       if (!prev.includes(date)) return [...prev, date];
 
-      return prev;
+      return prev; //이미 존재하면 아무 것도 안 함
     });
   };
 
@@ -89,8 +92,9 @@ function Home() {
       <div className="layout-wrapper">
 
         <Card
+          userId={userId}
           selectedDate={selectedDate}
-          onTodoStatusChange={handleTodoStatusChange}
+          handleTodoCompletion={handleTodoCompletion}
         />
 
         <div className="right-block">
@@ -102,12 +106,13 @@ function Home() {
               results={searchResults}
               onBack={() => setIsSearching(false)}
               onSelectDate={(date) => {
-                setSelectedDate(date);  // 🔥 해당 날짜 Card 로딩
-                setIsSearching(false);  // 🔙 검색창 닫기
+                setSelectedDate(date);  // 해당 날짜 Card 로딩
+                setIsSearching(false);  // 검색창 닫기
               }}
             />
           ) : (
             <Calendar
+              key={selectedDate + doneDates.join(",")}
               selectedDate={selectedDate}
               doneDates={doneDates}
               onDateClick={(date) => setSelectedDate(date)}

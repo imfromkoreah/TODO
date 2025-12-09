@@ -6,7 +6,7 @@ function SearchResultBox({ keyword, onBack, onSelectDate }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 yyyy-mm-dd 포맷으로 변환 (카드에서 인식 가능)
+  // yyyy-mm-dd 포맷으로 변환 (카드에서 인식 가능)
   const formatFullDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);
@@ -16,7 +16,7 @@ function SearchResultBox({ keyword, onBack, onSelectDate }) {
     return `${yyyy}-${mm}-${dd}`;
   };
 
-  // 🔥 화면에 표시할 짧은 날짜 (yy-mm-dd)
+  // 화면에 표시할 짧은 날짜 (yy-mm-dd)
   const formatShortDate = (dateString) => {
     if (!dateString) return "";
     const date = new Date(dateString);

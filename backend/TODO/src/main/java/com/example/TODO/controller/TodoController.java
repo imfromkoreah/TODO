@@ -14,6 +14,7 @@ public class TodoController {
 
     private final TodoService todoService;
 
+    // {유저별} 전체 할 일 목록 조회
     @GetMapping("/{userId}")
     public List<HashMap<String, Object>> getList(@PathVariable String userId) {
         return todoService.getTodoList(userId);
@@ -35,6 +36,7 @@ public class TodoController {
         return todoService.deleteTodo(id);
     }
 
+    // {유저별} 특정 날짜에 해당하는 할 일 목록 조회
     @GetMapping("/{userId}/date/{date}")
     public List<HashMap<String, Object>> getListByDate(
             @PathVariable String userId,
