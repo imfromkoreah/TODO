@@ -3,209 +3,213 @@ import axios from "axios";
 import "./Card.css";
 
 function Card({ userId, selectedDate, handleTodoCompletion }) {
-  const today = new Date().toLocaleDateString("ko-KR", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    weekday: "long",
-  });
+// 1) 날짜(그냥 예쁘게 표시)
+const today = new Date().toLocaleDateString("ko-KR", {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+  weekday: "long",
+});
 
-  // 상태 정의하기
-  const [todos, setTodos] = useState([]);
-  
-  // 서버에서 {유저별} 특정 날짜에 해당하는 할 일 목록 조회
-  const fetchTodos = () => {
-    if (!userId) return;
+// 2) {userId}별 할 일 목록 조회 (전체 / 특정 날짜-달력이랑 상태 관리)
+const [todos, setTodos] = useState([]);
 
-    if (selectedDate) {
-      axios
-        .get(`/api/todo/${userId}/date/${selectedDate}`)
-        .then((res) => {
-          setTodos(res.data);
-          setCurrentPage(1);
-        })
-        .catch((err) => console.error("날짜별 조회 오류:", err));
-      return;
-    }
+const fetchTodos = () => {
+  if (!userId) return;
 
+  if (selectedDate) {
     axios
-      .get(`/api/todo/${userId}`)
+      .get(`/api/todo/${userId}/date/${selectedDate}`)
       .then((res) => {
         setTodos(res.data);
         setCurrentPage(1);
       })
-      .catch((err) => console.error("전체 조회 오류:", err));
+      .catch((err) => console.error("날짜별 조회 오류:", err));
+    return;
+  }
+
+  axios
+    .get(`/api/todo/${userId}`)
+    .then((res) => {
+      setTodos(res.data);
+      setCurrentPage(1);
+    })
+    .catch((err) => console.error("전체 조회 오류:", err));
+};
+
+useEffect(() => {
+  fetchTodos();
+}, [userId, selectedDate]);
+
+
+// 3) TODO 추가 (CREATE)
+const [inputValue, setInputValue] = useState("");
+
+const addTodo = () => {
+  if (inputValue.trim() === "") return;
+
+  const newTodo = {
+    user_id: userId,
+    text: inputValue,
+    checked: 0,
   };
 
-  useEffect(() => {
-    fetchTodos();
-  }, [userId, selectedDate]);
+  axios.post("/api/todo/add", newTodo).then((res) => {
+    setTodos([res.data, ...todos]);
+    setInputValue("");
+  });
+};
 
-  // 할 일 목록 체크해서 서버에 요청 (부모에서 관리 안 함)
-  const toggleCheck = (id) => {
-    const target = todos.find((t) => t.id === id);
-    if (!target) return;
 
-    const newChecked = target.checked ? 0 : 1;
+// 4) TODO 수정 (UPDATE)
+const [editingId, setEditingId] = useState(null);
+const [editText, setEditText] = useState("");
 
-    axios
-      .post("/api/todo/update", {
-        id,
-        text: target.text,
-        checked: newChecked,
-        user_id: userId,
-      })
-      .then(() => {
-        const updatedTodos = todos.map((todo) =>
-          todo.id === id ? { ...todo, checked: newChecked } : todo
-        );
-        setTodos(updatedTodos);
+const startEdit = (todo) => {
+  setEditingId(todo.id);
+  setEditText(todo.text);
+  setOpenMenuId(null);
+};
 
-        const completed = updatedTodos.filter((t) => t.checked).length;
-        const total = updatedTodos.length;
+const finishEdit = () => {
+  const original = todos.find((t) => t.id === editingId);
 
-        /* {complatedCount} == {totalCount} 일 때만 완료 도장*/
-        if (completed === total && total > 0) {
-          saveStamp(selectedDate);
-        }
-
-        /* 하나라도 체크 해제되면 도장 삭제 */
-        if (newChecked === 0) {
-          deleteStamp(selectedDate);
-        }
-      })
-      .catch((err) => console.error("체크 업데이트 오류:", err));
+  const updated = {
+    id: editingId,
+    text: editText,
+    checked: original.checked ? 1 : 0,
+    user_id: userId,
   };
 
-  // 할 일 완료시 도장 찍기
-  // {complatedCount} == {totalCount} 일 때만 완료 도장
-  // (상태 반영은 부모에서!!!)
-  const saveStamp = (date) => {
-    axios
-      .post("/api/todo/done/add", {
-        user_id: userId,
-        done_date: date,
-      })
-      .then(() => {
-        if (typeof handleTodoCompletion === "function") {
-          handleTodoCompletion(date); // 달력에 도장 표시
-        }
-      })
-      .catch((err) => console.error("도장 저장 오류:", err));
-  };
-
-  const deleteStamp = (date) => {
-    axios
-      .post("/api/todo/done/delete", {
-        user_id: userId,
-        done_date: date,
-      })
-      .then(() => {
-        if (typeof handleTodoCompletion === "function") {
-          handleTodoCompletion(date, true); // 달력에서 도장 제거
-        }
-      })
-      .catch((err) => console.error("도장 삭제 오류:", err));
-  };
-
-  /* ------------------------------------------------------------- */
-
-  const [openMenuId, setOpenMenuId] = useState(null);
-  const [editingId, setEditingId] = useState(null);
-  const [editText, setEditText] = useState("");
-  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
-
-  const totalPages = Math.max(1, Math.ceil(todos.length / itemsPerPage));
-
-  const paginatedTodos = todos.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  const changePage = (page) => {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-    setOpenMenuId(null);
+  axios.post("/api/todo/update", updated).then(() => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === editingId ? { ...todo, text: editText } : todo
+      )
+    );
     setEditingId(null);
-  };
+  });
+};
 
-  const toggleMenu = (e, id) => {
-    e.stopPropagation();
-    setOpenMenuId(openMenuId === id ? null : id);
-  };
+// 5) TODO 삭제 (DELETE)
+const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
-  const startEdit = (todo) => {
-    setEditingId(todo.id);
-    setEditText(todo.text);
-    setOpenMenuId(null);
-  };
+const askDelete = (id) => {
+  setConfirmDeleteId(id);
+  setOpenMenuId(null);
+};
 
-  const finishEdit = () => {
-    const original = todos.find((t) => t.id === editingId);
+const confirmDelete = () => {
+  if (confirmDeleteId !== null) {
+    axios.post(`/api/todo/delete/${confirmDeleteId}`).then(() => {
+      setTodos(todos.filter((todo) => todo.id !== confirmDeleteId));
 
-    const updated = {
-      id: editingId,
-      text: editText,
-      checked: original.checked ? 1 : 0,
-      user_id: userId,
-    };
-
-    axios.post("/api/todo/update", updated).then(() => {
-      setTodos(
-        todos.map((todo) =>
-          todo.id === editingId ? { ...todo, text: editText } : todo
-        )
+      const newTotalPages = Math.max(
+        1,
+        Math.ceil((todos.length - 1) / itemsPerPage)
       );
-      setEditingId(null);
+
+      if (currentPage > newTotalPages) {
+        setCurrentPage(newTotalPages);
+      }
+
+      setConfirmDeleteId(null);
     });
-  };
+  }
+};
 
-  const askDelete = (id) => {
-    setConfirmDeleteId(id);
-    setOpenMenuId(null);
-  };
+// 6) 체크/미체크 → 완료 상태 변경 + 도장 로직
+const toggleCheck = (id) => {
+  const target = todos.find((t) => t.id === id);
+  if (!target) return;
 
-  const confirmDelete = () => {
-    if (confirmDeleteId !== null) {
-      axios.post(`/api/todo/delete/${confirmDeleteId}`).then(() => {
-        setTodos(todos.filter((todo) => todo.id !== confirmDeleteId));
+  const newChecked = target.checked ? 0 : 1;
 
-        const newTotalPages = Math.max(
-          1,
-          Math.ceil((todos.length - 1) / itemsPerPage)
-        );
-
-        if (currentPage > newTotalPages) {
-          setCurrentPage(newTotalPages);
-        }
-
-        setConfirmDeleteId(null);
-      });
-    }
-  };
-
-  const [inputValue, setInputValue] = useState("");
-
-  const addTodo = () => {
-    if (inputValue.trim() === "") return;
-
-    const newTodo = {
+  axios
+    .post("/api/todo/update", {
+      id,
+      text: target.text,
+      checked: newChecked,
       user_id: userId,
-      text: inputValue,
-      checked: 0,
-    };
+    })
+    .then(() => {
+      const updatedTodos = todos.map((todo) =>
+        todo.id === id ? { ...todo, checked: newChecked } : todo
+      );
+      setTodos(updatedTodos);
 
-    axios.post("/api/todo/add", newTodo).then((res) => {
-      setTodos([res.data, ...todos]);
-      setInputValue("");
-    });
-  };
+      const completed = updatedTodos.filter((t) => t.checked).length;
+      const total = updatedTodos.length;
 
-  const completedCount = todos.filter((todo) => todo.checked).length;
-  const totalCount = todos.length;
+      // complatedCount} == {totalCount} 일 때만 완료 도장
+      if (completed === total && total > 0) {
+        saveStamp(selectedDate);
+      }
+      // 하나라도 체크 해제되면 완료 도장 삭제 
+      if (newChecked === 0) {
+        deleteStamp(selectedDate);
+      }
+    })
+    .catch((err) => console.error("체크 업데이트 오류:", err));
+};
+
+// 7) 완료 도장 저장/삭제 (부모에게 전달!! 부모가 상태 관리)
+const saveStamp = (date) => {
+  axios
+    .post("/api/todo/done/add", {
+      user_id: userId,
+      done_date: date,
+    })
+    .then(() => {
+      if (typeof handleTodoCompletion === "function") {
+        handleTodoCompletion(date);
+      }
+    })
+    .catch((err) => console.error("도장 저장 오류:", err));
+};
+
+const deleteStamp = (date) => {
+  axios
+    .post("/api/todo/done/delete", {
+      user_id: userId,
+      done_date: date,
+    })
+    .then(() => {
+      if (typeof handleTodoCompletion === "function") {
+        handleTodoCompletion(date, true);
+      }
+    })
+    .catch((err) => console.error("도장 삭제 오류:", err));
+};
+
+// 8) UI: 메뉴, 페이지네이션 등 부가 기능
+const [openMenuId, setOpenMenuId] = useState(null);
+
+const toggleMenu = (e, id) => {
+  e.stopPropagation();
+  setOpenMenuId(openMenuId === id ? null : id);
+};
+
+const [currentPage, setCurrentPage] = useState(1);
+const itemsPerPage = 4;
+
+const totalPages = Math.max(1, Math.ceil(todos.length / itemsPerPage));
+
+const paginatedTodos = todos.slice(
+  (currentPage - 1) * itemsPerPage,
+  currentPage * itemsPerPage
+);
+
+const changePage = (page) => {
+  if (page < 1 || page > totalPages) return;
+  setCurrentPage(page);
+  setOpenMenuId(null);
+  setEditingId(null);
+};
+
+// 9) {completedCount} / {totalCount} 완료 카운트
+const completedCount = todos.filter((todo) => todo.checked).length;
+const totalCount = todos.length;
 
   return (
     <div className="card">
