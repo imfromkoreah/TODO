@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./Calendar.css";
-import snowStamp from "../../assets/snow.png";   // 🔥 import한 이미지 사용!
+import snowStamp from "../../assets/snow.png";   
 
-const Calendar = ({ renderDateCell, onDateClick, selectedDate, doneDates = [] }) => {
+const Calendar = ({ onDateClick, selectedDate, doneDates = [] }) => {
+  
+  // 기본값을 new Date() 기준으로 해서 상태 변화
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const year = currentDate.getFullYear();
@@ -52,7 +54,7 @@ const Calendar = ({ renderDateCell, onDateClick, selectedDate, doneDates = [] })
     date.getMonth() === today.getMonth() &&
     date.getDate() === today.getDate();
 
-  // 🔥 선택 날짜 체크
+  // 선택된 날짜 체크
   const isSelectedDate = (date) => {
     if (!selectedDate) return false;
 
@@ -64,7 +66,7 @@ const Calendar = ({ renderDateCell, onDateClick, selectedDate, doneDates = [] })
     return formatted === selectedDate;
   };
 
-  // 🔥 완료된 날짜 체크
+  // 할 일 완료된 날짜 체크
   const isDoneDate = (date) => {
     const y = date.getFullYear();
     const m = String(date.getMonth() + 1).padStart(2, "0");
@@ -125,7 +127,7 @@ const Calendar = ({ renderDateCell, onDateClick, selectedDate, doneDates = [] })
                   {/* 날짜 숫자 */}
                   <span>{date.getDate()}</span>
 
-                  {/* 🔥 완료 날짜면 도장 표시 */}
+                  {/* 완료 날짜면 도장 표시 */}
                   {done && (
                     <img
                       src={snowStamp}
