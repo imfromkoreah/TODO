@@ -84,7 +84,18 @@ const Calendar = ({ renderDateCell, onDateClick }) => {
                   className={`calendar-date-cell ${
                     !currentMonth ? "dimmed" : ""
                   } ${todayClass}`}
-                  onClick={() => onDateClick && onDateClick(date)}
+                  onClick={() => {
+                    if (!onDateClick) return;
+
+                    // 한국시간 기준 날짜 문자열 생성
+                    const y = date.getFullYear();
+                    const m = String(date.getMonth() + 1).padStart(2, "0");
+                    const d = String(date.getDate()).padStart(2, "0");
+
+                    const formatted = `${y}-${m}-${d}`;;
+
+                    onDateClick(formatted);   // ← 이제부터 문자열 넘김
+                  }}
                 >
                   {renderDateCell
                     ? renderDateCell(date, currentMonth)

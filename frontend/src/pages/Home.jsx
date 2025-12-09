@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Card from "../components/Card/Card";
 import Calendar from "../components/Calendar/Calendar";
@@ -14,7 +14,7 @@ function Home() {
   /* 🔥 선택된 날짜 저장 */
   const [selectedDate, setSelectedDate] = useState(null);
 
-  /* 🔥 날짜 포맷 함수 — 한국 시간 유지 */
+  /* 🔥 날짜 포맷 (한국 시간) */
   const formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -22,14 +22,22 @@ function Home() {
     return `${year}-${month}-${day}`;
   };
 
+  /* 🔥 앱 로드 시 자동으로 오늘 날짜로 설정 */
+  useEffect(() => {
+    if (selectedDate === null) {
+      const today = new Date();
+      setSelectedDate(formatDate(today));  
+    }
+  }, [selectedDate]);
+
+
   return (
     <div className="home-container">
       <div className="layout-wrapper">
 
-        {/* 왼쪽 카드 — 날짜 전달 */}
+        {/* 왼쪽 Card - 선택된 날짜 전달 */}
         <Card selectedDate={selectedDate} />
 
-        {/* 오른쪽 */}
         <div className="right-block">
 
           <Search
@@ -46,14 +54,14 @@ function Home() {
             />
           ) : (
             <Calendar
-              onDateClick={(date) => {
-                const formatted = formatDate(date); // 🔥 수정된 부분
-                setSelectedDate(formatted);
+              onDateClick={(selected) => {
+                setSelectedDate(selected);
+                console.log("📌 Calendar 선택 날짜:", selected);
               }}
             />
           )}
-        </div>
 
+        </div>
       </div>
     </div>
   );

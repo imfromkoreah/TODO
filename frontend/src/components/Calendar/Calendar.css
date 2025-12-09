@@ -19,7 +19,7 @@
 
 /* 🔥 오늘 날짜 강조 */
 .calendar-date-cell.today span {
-  background: rgba(228, 111, 1, 0.85) !important; /* 진한 오렌지 하이라이트 */
+  background: rgba(230, 8, 8, 0.85) !important; 
   color: white !important;
   transform: scale(1.1);
   font-weight: 700;
@@ -38,7 +38,7 @@
 .calendar-date-display {
   font-size: 20px;
   font-weight: 600;
-  color: #e46f01; /* 카드 오렌지 포인트 */
+  color: rgba(255, 255, 255, 0.85) 
 }
 
 /* 이전/다음 달 버튼 */

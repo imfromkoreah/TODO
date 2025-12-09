@@ -47,6 +47,7 @@ function Card({ selectedDate }) {
   };
 
   useEffect(() => {
+    console.log("넘어온 선택날짜 :", selectedDate)
     fetchTodos();
   }, [userId, selectedDate]);
 
