@@ -60,6 +60,7 @@ const addTodo = () => {
 
   axios.post("/api/todo/add", newTodo).then((res) => {
     // 새 할 일(미체크 상태)을 리스트에 추가
+    console.log("서버에서 보낸 데이터:", res.data)
     setTodos([res.data, ...todos]);
     setInputValue("");
 
@@ -69,7 +70,6 @@ const addTodo = () => {
     }
   });
 };
-
 
 // 4) TODO 수정 (UPDATE)
 const [editingId, setEditingId] = useState(null);

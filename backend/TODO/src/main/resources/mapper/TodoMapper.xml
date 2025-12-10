@@ -20,11 +20,11 @@
     </select>
 
     <!-- 추가 -->
-    <insert id="insertTodo" parameterType="java.util.HashMap">
-        INSERT INTO tb_todo
-            (user_id, text, checked)
-        VALUES
-            (#{user_id}, #{text}, #{checked})
+    <insert id="insertTodo" parameterType="java.util.HashMap"
+            useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO tb_todo (user_id, text, checked)
+        VALUES (#{user_id}, #{text}, #{checked});
     </insert>
 
     <!-- 수정 -->
