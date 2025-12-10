@@ -1,5 +1,6 @@
 # TODO
 ![스크린샷](./frontend/src/assets/main.png)
+[📌 개발 일지(Notion)](https://www.notion.so/2c0c43385f8680a29ab2d9a4d2deb787?v=2c0c43385f8681fbac9d000c038293c2&source=copy_link)
 
 # 실행 방법
 
