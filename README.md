@@ -1,5 +1,5 @@
 # TODO
-![스크린샷](./assets/main.png)
+![스크린샷](./src/assets/main.png)
 
 # 실행 방법
 
