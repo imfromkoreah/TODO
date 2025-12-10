@@ -1,5 +1,5 @@
 # TODO
-![스크린샷](./src/assets/main.png)
+![스크린샷](./frontend/src/assets/main.png)
 
 # 실행 방법
 
@@ -15,3 +15,7 @@
 cd frontend
 npm install
 npm run dev
+```
+
+프론트엔드 접속 주소:
+http://localhost:5173
