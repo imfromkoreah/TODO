@@ -49,8 +49,7 @@ const addTodo = () => {
   if (inputValue.trim() === "") return;
 
   // 이미 완료 상태였는지 체크
-  const wasAllCompleted =
-    todos.length > 0 && todos.every((t) => t.checked);
+  const wasAllCompleted = todos.length > 0 && todos.every((t) => t.checked);
 
   const newTodo = {
     user_id: userId,
@@ -61,9 +60,16 @@ const addTodo = () => {
 
   axios.post("/api/todo/add", newTodo).then((res) => {
     // 새 할 일(미체크 상태)을 리스트에 추가
-    console.log("서버에서 보낸 데이터:", res.data)
     setTodos([res.data, ...todos]);
     setInputValue("");
+
+    // 🔹 미래 날짜라면 NEW 표시 추가 (수정)
+    const todayObj = new Date();
+    const selectedObj = new Date(selectedDate);
+
+    if (selectedObj > todayObj && typeof handleFutureTodo === "function") {
+      handleFutureTodo(selectedDate);
+    }
 
     // 기존에 전부 완료였고, 날짜가 선택된 상태였다면 → 도장 삭제
     if (selectedDate && wasAllCompleted) {
@@ -254,13 +260,19 @@ const totalCount = todos.length;
 
       <div className="todo-input-wrap">
         <input
-          type="text"
-          placeholder="할 일을 입력해주세요"
-          className="todo-input"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && addTodo()}
-        />
+            type="text"
+            placeholder={
+              selectedDate
+                ? selectedDate < new Date().toISOString().split("T")[0]
+                  ? "밀린 일기를 쓰는군요 😉"
+                  : "오늘 할 일을 입력해주세요"
+                : "할 일을 입력해주세요"
+            }
+            className="todo-input"
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addTodo()}
+          />
         <button className="add-btn" onClick={addTodo}>
           추가
         </button>

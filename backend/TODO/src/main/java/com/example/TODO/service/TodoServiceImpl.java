@@ -79,5 +79,14 @@ public class TodoServiceImpl implements TodoService {
         return todoMapper.searchTodo(param);
     }
 
+    // 미래 날짜 TODO 조회
+    @Override
+    public List<String> getFutureTodoDates(String userId) {
+        HashMap<String, Object> param = new HashMap<>();
+        param.put("user_id", userId);
+        return todoMapper.selectFutureTodoDates(param);
+    }
+
+
 
 }

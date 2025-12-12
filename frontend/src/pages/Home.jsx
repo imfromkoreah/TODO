@@ -17,6 +17,8 @@ function Home() {
   const [isSearching, setIsSearching] = useState(false);
   const [keyword, setKeyword] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const [futureDates, setFutureDates] = useState([]);
+
   
   // 날짜를 yyyy-mm-dd 형태로 바꾸기 위해서 사용
   // Card 요소랑 Calendar 요소 모두 이 포맷을 기반으로 동작하게 구성함
@@ -27,7 +29,7 @@ function Home() {
     return `${year}-${month}-${day}`;
   };
 
-  // JS 내장 함수 new Date() 사용
+  // JS 내장 함수 new Date() 사용 -> 오늘 날짜 초기화 (null 값 안되게 설정)
   useEffect(() => {
     if (selectedDate === null) {
       const today = new Date();
@@ -56,6 +58,18 @@ function Home() {
       .catch((err) => console.error("도장 날짜 불러오기 오류:", err));
   }, [userId]);
 
+
+  // DB에서 미래 날짜 목록 불러오기
+  useEffect(() => {
+    if (!userId) return;
+
+    axios
+      .get(`/api/todo/${userId}/future`)
+      .then((res) => setFutureDates(res.data))
+      .catch((err) => console.error("미래 날짜 불러오기 오류:", err));
+  }, [userId]);
+
+
   // Card에서 할 일 완료/미완료 시 도장 목록을 업데이트
   // date랑 isDelete를 매개변수로 지정
   const handleTodoCompletion = (date, isDelete = false) => {
@@ -65,6 +79,14 @@ function Home() {
       if (!prev.includes(date)) return [...prev, date];
 
       return prev; //이미 존재하면 아무 것도 안 함
+    });
+  };
+
+  // 🔹 미래 TODO 추가 시 상태 업데이트
+  const handleFutureTodo = (date) => {
+    setFutureDates((prev) => {
+      if (!prev.includes(date)) return [...prev, date];
+      return prev;
     });
   };
 
@@ -95,6 +117,7 @@ function Home() {
           userId={userId}
           selectedDate={selectedDate}
           handleTodoCompletion={handleTodoCompletion}
+          handleFutureTodo={handleFutureTodo}
         />
 
         <div className="right-block">
@@ -112,9 +135,10 @@ function Home() {
             />
           ) : (
             <Calendar
-              key={selectedDate + doneDates.join(",")}
+              key={selectedDate + doneDates.join(",") + futureDates.join(",")}
               selectedDate={selectedDate}
               doneDates={doneDates}
+              futureDates={futureDates}
               onDateClick={(date) => setSelectedDate(date)}
             />
           )}

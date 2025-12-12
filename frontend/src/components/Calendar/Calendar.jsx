@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./Calendar.css";
 import snowStamp from "../../assets/snow.png";   
 
-const Calendar = ({ onDateClick, selectedDate, doneDates = [] }) => {
+const Calendar = ({ onDateClick, selectedDate, doneDates = [], futureDates = [] }) => {
   
   // 기본값을 new Date() 기준으로 해서 상태 변화
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -72,9 +72,18 @@ const Calendar = ({ onDateClick, selectedDate, doneDates = [] }) => {
     const m = String(date.getMonth() + 1).padStart(2, "0");
     const d = String(date.getDate()).padStart(2, "0");
     const formatted = `${y}-${m}-${d}`;
-
     return doneDates.includes(formatted);
   };
+
+  // 미래 일정 날짜 체크
+  const isFutureDate = (date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+    const formatted = `${y}-${m}-${d}`;
+    return futureDates.includes(formatted);
+  };
+
 
   return (
     <div className="calendar-wrapper">
@@ -134,6 +143,11 @@ const Calendar = ({ onDateClick, selectedDate, doneDates = [] }) => {
                       alt="done"
                       className="done-stamp"
                     />
+                  )}
+
+                  {/* 미래 일정이면 파란 점 표시 */}
+                  {isFutureDate(date) && !isToday(date) && (
+                    <div className="future-dot"></div>
                   )}
                 </div>
               );

@@ -25,4 +25,7 @@ public interface TodoService {
     // 했던 일 검색하기
     List<HashMap<String, Object>> searchTodo(String userId, String keyword);
 
+    // 미래 날짜 TODO 조회
+    List<String> getFutureTodoDates(String userId);
+
 }

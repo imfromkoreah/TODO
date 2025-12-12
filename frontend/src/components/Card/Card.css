@@ -4,18 +4,17 @@
 .card {
   display: flex;
   flex-direction: column;
-  width: 350px;          /* ← 고정 너비 (또는 max-content) */
+  width: 350px;
   min-height: 480px;
-  color:  rgba(185, 184, 184, 0.85);
+  color: rgba(185, 184, 184, 0.85);
   border-radius: 0.25rem;
   padding: 2rem;
   position: relative;
   z-index: 10;
   overflow: hidden;
-  overflow: hidden;
   box-shadow: 0 0 1px #266349, 0 0 1px #083f27;
   height: 500px;
-  margin: 0 auto;        /* ← flex 정렬 보조 */
+  margin: 0 auto;
 }
 
 /* TO DO List Title */
@@ -51,12 +50,13 @@
 
 .todo-input {
   flex: 1;
-  padding: 0.8rem 1rem;
+  padding: 0 1rem;             
+  height: 42px;                 
   border-radius: 0.45rem;
   border: 1px solid rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.1);
   color: #ffffff;
-  font-size: 1.05rem;
+  font-size: 1rem;
   backdrop-filter: blur(3px);
   transition: border 0.2s ease, background 0.2s ease;
 }
@@ -72,7 +72,8 @@
 
 /* Add Button */
 .add-btn {
-  padding: 0.55rem 1rem;
+  height: 42px;                 
+  padding: 0 1rem;              
   min-width: 60px;
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
@@ -193,18 +194,7 @@
   z-index: -1;
 }
 
-/* 원형 팝업 메뉴 전체 묶음 */
-.circular-menu {
-  position: absolute;
-  right: 40px; /* 햄버거 버튼 왼쪽 기준 */
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0;
-  height: 0;
-}
-
-/* 개별 동그라미 버튼 기본 */
-/* 팝업 메뉴 래퍼 */
+/* 원형 팝업 메뉴 */
 .circular-menu {
   position: absolute;
   right: 8px;
@@ -215,7 +205,6 @@
   z-index: 3000;
 }
 
-/* 버튼 기본 스타일 */
 .circle-btn {
   position: absolute;
   width: 30px;
@@ -229,7 +218,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   opacity: 0;
   transform: translate(0, 0) scale(0.6);
   transition:
@@ -237,18 +225,16 @@
     opacity 0.25s ease;
 }
 
-/* 열렸을 때 위치 — 수정, 삭제 버튼 나란히 */
 .circular-menu.open .edit-btn {
-  transform: translate(-40px, -48px) scale(1); /* 위로 살짝 + 오른쪽 */
+  transform: translate(-40px, -48px) scale(1);
   opacity: 1;
 }
 
 .circular-menu.open .delete-btn {
-  transform: translate(-75px, -48px) scale(1); /* 수정 왼쪽에 배치 */
+  transform: translate(-75px, -48px) scale(1);
   opacity: 1;
 }
 
-/* Hover */
 .circle-btn:hover {
   background: #f0f0f0;
 }
@@ -269,6 +255,7 @@
   border: 1px solid rgba(230, 8, 8, 0.85);
   background: rgba(255,255,255,0.25);
 }
+
 .done-btn {
   width: 25px;
   height: 25px;
@@ -295,7 +282,6 @@
   transition: 0.2s ease;
 }
 
-/* ✔ 완료 hover 효과 — 수정/삭제 버튼과 통일 */
 .done-btn:hover {
   background: #f0f0f0;
   transform: scale(1.08);
@@ -306,7 +292,8 @@
   stroke: #66bb6a;
   transform: scale(1.11);
 }
-/* 삭제 모달 배경 */
+
+/* 삭제 모달 */
 .delete-modal-bg {
   position: fixed;
   top: 0;
@@ -321,7 +308,6 @@
   backdrop-filter: blur(2px);
 }
 
-/* 모달 박스 */
 .delete-modal {
   background: rgba(255,255,255,0.15);
   padding: 18px 22px;
@@ -334,7 +320,6 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.25);
 }
 
-/* 버튼 배치 */
 .delete-modal-btns {
   display: flex;
   justify-content: center;
@@ -342,7 +327,6 @@
   margin-top: 15px;
 }
 
-/* 취소/삭제 버튼 */
 .cancel-btn,
 .confirm-btn {
   padding: 6px 14px;
@@ -371,17 +355,16 @@
   background: #b30000;
 }
 
-/* 페이지네이션 - 카드 하단 고정 */
+/* 페이지네이션 */
 .pagination {
   position: absolute;
-  bottom: 10px;          /* 카드 아래에서 18px 띄움 */
+  bottom: 10px;
   left: 0;
   width: 100%;
   display: flex;
   justify-content: center;
   gap: 10px;
   align-items: center;
-  pointer-events: auto;
 }
 
 .pagination button {
@@ -417,6 +400,7 @@
   background: rgba(230, 8, 8, 0.85);
   border-radius: 2px;
 }
+
 .todo-status {
   margin-top: -0.6rem;
   margin-bottom: 0.2rem;
@@ -424,7 +408,7 @@
   color: rgba(255,255,255,0.75);
   text-align: right;
   padding-left: 2px;
-  transition: color 0.25s ease; /* 부드럽게 색 변화 */
+  transition: color 0.25s ease;
 }
 
 .empty-message {
@@ -433,5 +417,3 @@
   color: rgba(255, 255, 255, 0.6);
   font-size: 0.95rem;
 }
-
-

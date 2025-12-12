@@ -70,4 +70,10 @@ public class TodoController {
         return todoService.searchTodo(userId, keyword);
     }
 
+    // 미래 날짜 TODO 조회
+    @GetMapping("/{userId}/future")
+    public List<String> getFutureTodoDates(@PathVariable String userId) {
+        return todoService.getFutureTodoDates(userId);
+    }
+    
 }

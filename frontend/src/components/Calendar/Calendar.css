@@ -159,4 +159,17 @@
   pointer-events: none;
 }
 
+/* 미래 일정 도트 위치 예쁘게 */
+.future-dot {
+  position: absolute;      /* 셀 기준 위치 고정 */
+  top: 8px;                /* 위쪽에서 살짝 띄움 */
+  right: 5px;              /* 오른쪽에서 살짝 띄움 */
+  width: 6px;
+  height: 6px;
+  background: #1cc24d;
+  border-radius: 50%;
+  pointer-events: none;    /* 클릭 방해 안 되도록 */
+}
+
+
 

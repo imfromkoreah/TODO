@@ -25,4 +25,6 @@ public interface TodoMapper {
 
   List<HashMap<String, Object>> searchTodo(HashMap<String, Object> param);
 
+  List<String> selectFutureTodoDates(HashMap<String, Object> param);
+
 }
