@@ -23,8 +23,8 @@
     <insert id="insertTodo" parameterType="java.util.HashMap"
             useGeneratedKeys="true"
             keyProperty="id">
-        INSERT INTO tb_todo (user_id, text, checked)
-        VALUES (#{user_id}, #{text}, #{checked});
+        INSERT INTO tb_todo (user_id, text, checked, created_date)
+        VALUES (#{user_id}, #{text}, #{checked}, #{created_date});
     </insert>
 
     <!-- 수정 -->

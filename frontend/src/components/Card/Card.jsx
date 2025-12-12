@@ -56,6 +56,7 @@ const addTodo = () => {
     user_id: userId,
     text: inputValue,
     checked: 0,
+    created_date: selectedDate,
   };
 
   axios.post("/api/todo/add", newTodo).then((res) => {
