@@ -113,15 +113,30 @@ const askDelete = (id) => {
 const confirmDelete = () => {
   if (confirmDeleteId !== null) {
     axios.post(`/api/todo/delete/${confirmDeleteId}`).then(() => {
-      setTodos(todos.filter((todo) => todo.id !== confirmDeleteId));
 
+      // 삭제된 이후 남은 리스트 계산
+      const remainingTodos = todos.filter(
+        (todo) => todo.id !== confirmDeleteId
+      );
+
+      setTodos(remainingTodos);
+
+      // 페이지네이션 재계산
       const newTotalPages = Math.max(
         1,
-        Math.ceil((todos.length - 1) / itemsPerPage)
+        Math.ceil(remainingTodos.length / itemsPerPage)
       );
 
       if (currentPage > newTotalPages) {
         setCurrentPage(newTotalPages);
+      }
+
+      // 삭제 후 -> 완료 개수 다시 계산
+      const completedCount = remainingTodos.filter((t) => t.checked).length;
+      const totalCount = remainingTodos.length;
+
+      if (completedCount === totalCount && totalCount > 0) {
+        saveStamp(selectedDate);
       }
 
       setConfirmDeleteId(null);
