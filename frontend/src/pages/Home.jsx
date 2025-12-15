@@ -90,6 +90,11 @@ function Home() {
     });
   };
 
+  // 🔹 미래 TODO 추가 시 상태 업데이트
+  const removeFutureDate = (date) => {
+    setFutureDates((prev) => prev.filter((d) => d !== date));
+  }
+
   // 검색 실행
   const handleSearch = (value) => {
     setKeyword(value);
@@ -118,6 +123,7 @@ function Home() {
           selectedDate={selectedDate}
           handleTodoCompletion={handleTodoCompletion}
           handleFutureTodo={handleFutureTodo}
+          removeFutureDate={removeFutureDate}
         />
 
         <div className="right-block">
